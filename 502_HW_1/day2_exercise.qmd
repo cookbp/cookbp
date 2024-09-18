@@ -1,0 +1,104 @@
+---
+title: "R code for Data Science for Beginners"
+subtitle: " Day 2: Individual Exercise"
+author: "Benjamin Cook"  #If multiple, 'c("A", "B")'
+date: "2024-9-10"  #r Sys.Date()
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+## Task 1. `if...else` function 
+
+Mary and John's families (each family has 5 members) are going to a movie and have a hard time deciding who will sit where in a row with 10 seats. You decide to help them sort it out. Please let the Mary's sit in the number 1-5  and the John's in the number 6-10.
+
+Please use `if...else` function to complete the task.
+
+```{r}
+# WRITE YOUR ANSWER HERE,  seats = rep(NA, 10)
+> 
+> 
+> for (i in 1:10) {
++     if (i <= 5) {
++         seats[i] <- paste("Mary", i)
++     } else {
++         seats[i] <- paste("John", i - 5)
++     }
++ }
+> 
+> seats
+```
+
+## Task 1-2. 
+
+### You want two family members to know each other better so decide to mix them up. Please write a script to let one family to sit next to the other family members in a row. Again use the if..else function. 
+
+WRITE YOUR CODE HERE  > seats <- rep(NA, 10)
+> 
+> 
+> for (i in 1:10) {
++     if (i %% 2 == 1) {  # If seat number is odd, assign Mary's family member
++         seats[i] <- paste("Mary", (i + 1) / 2)
++     } else {  # If seat number is even, assign John's family member
++         seats[i] <- paste("John", i / 2)
++     }
++ }
+> 
+> # 
+> seats
+
+
+## Task 2. loop 
+### 2-1 
+We are now in the year of 2022. Please use for loop to print out all the years starting from 2012 to 2022. 
+WRITE YOUR CODE HERE  > for (year in 2012:2022) {
++     print(year)
++ }
+
+### 2-2
+Please use `paste()` function to write a complete sentence like "The year is 2012". 
+
+WRITE YOUR CODE HERE  for (year in 2012:2022) {
+  print(paste("The year is", year))
+}
+
+### 2-3
+Turns out we don't really like 2020 and 2021 because Covid messed up many parts of our lives. Please don't print out these two years using the next function.
+
+WRITE YOUR CODE HERE  > for (year in 2012:2022) {
++     if (year == 2020 | year == 2021) {
++         next  
++     }
++     print(paste("The year is", year))
++ }
+
+
+## Task 3. functions 
+
+Please write a function that will always add 10 in addition to whatever number you put in.
+
+WRITE YOUR CODE HERE  > add_10 <- function(number) {
++     return(number + 10)
++ }
+> 
+> # Example usage
+> result <- add_10(5)  # This will return 15
+> print(result)
+
+### Please write a function that will always identify a missing value in your vector. And please write a complete sentence to show where the missing value is located in the vector
+
+WRITE YOUR CODE HERE  > find_missing_values <- function(vec) {
++     for (i in 1:length(vec)) {
++         if (is.na(vec[i])) {
++             print(paste("Missing value found at position", i))
++         }
++     }
++ }
+> 
+> my_vector <- c(1, 2, NA, 4, 5, NA, 7)
+> find_missing_values(my_vector)
+
+
+Finally, execute the entire contents of this file. Make sure that you don't get any error message. If you get an error message, it's probably because you forgot to comment out something. 
+
