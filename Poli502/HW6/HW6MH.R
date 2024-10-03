@@ -1,0 +1,44 @@
+# Set the number of simulations
+num_simulations <- 10000
+
+# Initialize variables to keep track of wins
+wins_if_switch <- 0
+wins_if_stay <- 0
+
+# Loop to simulate the Monty Hall game
+for (i in 1:num_simulations) {
+  
+  # Randomly assign the car behind one of the three doors (1, 2, or 3)
+  car_door <- sample(1:3, 1)
+  
+  # The player randomly picks one door (1, 2, or 3)
+  player_choice <- sample(1:3, 1)
+  
+  # Monty knows where the car is and opens one of the other two doors to reveal a goat.
+  # Monty will open a door that is not the car door and not the player's initial choice.
+  available_doors <- setdiff(1:3, c(player_choice, car_door))
+  monty_opens <- sample(available_doors, 1)
+  
+  # If the player switches, their new choice is the remaining unopened door
+  switch_choice <- setdiff(1:3, c(player_choice, monty_opens))[1]  # Ensure single value
+  
+  # Check if the player wins by switching or by staying
+  if (switch_choice == car_door) {
+    wins_if_switch <- wins_if_switch + 1
+  }
+  
+  if (player_choice == car_door) {
+    wins_if_stay <- wins_if_stay + 1
+  }
+}
+
+# Calculate probabilities of winning by switching or staying
+probability_switch <- wins_if_switch / num_simulations
+probability_stay <- wins_if_stay / num_simulations
+
+# Print the results
+cat("Probability of winning if you switch:", probability_switch, "\n")
+# Probability of winning if you switch: 0.4793 
+
+cat("Probability of winning if you stay:", probability_stay, "\n")
+#  Probability of winning if you stay: 0.3335 
