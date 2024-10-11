@@ -1,0 +1,454 @@
+---
+title: "Midterm Exam: POLI502"
+author: "Benjamin Cook"
+date: "2024-10-11"
+output: pdf_document
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+```{r}
+# Load the necessary packages
+library(tidyverse)
+install.packages("tidyverse")
+
+```
+
+```{r}
+# Load the world dataset from local storage
+ world.data <- read_csv("C:/Users/benco/OneDrive/Documents/data/world.csv")
+ 
+ # Let's check the column names in the dataset
+colnames(world.data)
+
+# Create a frequency table
+ft.oecd <- world.data %>%
+  count(oecd) %>%
+  mutate(Percentage = (n / sum(n)) * 100) %>%
+  rename(`OECD Member?` = oecd, Freq = n)
+
+ft.oecd
+
+
+```
+
+```{r}
+# Task 3: Answers
+
+# (A) Number of OECD member countries: 30
+# (B) Number of non-OECD member countries: 161
+# (C) Percentage of OECD member countries: 84.29
+# (D) Percentage of non-OECD member countries: 30
+
+
+```
+
+```{r}
+# Create the bar chart for OECD membership
+ggplot(ft.oecd, aes(x = `OECD Member?`, y = Freq)) +
+  geom_bar(stat = "identity") +
+  xlab("OECD Membership") +
+  ylab("Number of Countries") +
+  ggtitle("Bar Chart of OECD Membership")
+```
+
+```{r}
+# Task 5: List three OECD member countries and three non-democratic countries
+
+# Filter for OECD member countries based on the actual coding
+oecd_members <- world.data %>%
+  filter(oecd == "OECD Member state") %>%
+  select(country) %>%
+  head(3)
+```
+
+```{r}
+# Display three OECD member countries
+oecd_members
+```
+
+```{r}
+# Check unique values for the democ_regime variable as well
+unique(world.data$democ_regime)
+
+```
+
+```{r}
+# Filter for non-democratic countries based on the actual coding
+non_democratic <- world.data %>%
+  filter(democ_regime == "No") %>%
+  select(country) %>%
+  head(3)
+```
+
+```{r}
+# Display three non-democratic countries
+non_democratic
+```
+
+```{r}
+# Task 6: Describe the GDP variable numerically
+
+# Ensure the column name is correct by checking the dataset
+colnames(world.data)
+```
+
+```{r}
+# Calculate the required statistics for gdp_10_thou
+gdp_stats <- world.data %>%
+  summarise(
+    min_gdp = min(gdp_10_thou, na.rm = TRUE),
+    max_gdp = max(gdp_10_thou, na.rm = TRUE),
+    median_gdp = median(gdp_10_thou, na.rm = TRUE),
+    mean_gdp = mean(gdp_10_thou, na.rm = TRUE),
+    first_quartile = quantile(gdp_10_thou, 0.25, na.rm = TRUE),
+    third_quartile = quantile(gdp_10_thou, 0.75, na.rm = TRUE),
+    std_dev_gdp = sd(gdp_10_thou, na.rm = TRUE)
+  )
+
+```
+
+```{r}
+# Display the calculated statistics
+gdp_stats
+```
+
+```{r}
+# Task 7: Answer
+# The distribution of the GDP per capita variable is positively skewed (skewed to the right).
+
+```
+
+```{r}
+# Task 8: Draw a histogram for the per capita GDP variable
+
+# Draw the histogram for the gdp_10_thou variable
+ggplot(world.data, aes(x = gdp_10_thou)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  xlab("Per capita GDP (in 10,000 US dollars)") +
+  ylab("Number of countries") +
+  ggtitle("Histogram of Per Capita GDP")
+```
+
+```{r}
+# Task 9: Identify two countries with per capita GDP greater than $40,000
+
+# Filter countries with per capita GDP greater than 4 (which represents $40,000)
+high_gdp_countries <- world.data %>%
+  filter(gdp_10_thou > 4) %>%
+  select(country, gdp_10_thou)
+```
+
+```{r}
+# Display the results
+high_gdp_countries
+```
+
+```{r}
+# Task 10: Calculate the standard error of the mean for gdp_10_thou
+
+# Calculate the standard deviation (already calculated, but doing it again here)
+std_dev_gdp <- sd(world.data$gdp_10_thou, na.rm = TRUE)
+```
+
+```{r}
+# Number of observations (excluding missing values)
+n <- 177
+```
+
+```{r}
+# Calculate the standard error of the mean
+standard_error <- std_dev_gdp / sqrt(n)
+```
+
+```{r}
+# Display the standard error
+standard_error
+```
+
+```{r}
+# Task 11: Construct the 95% confidence interval for the mean of gdp_10_thou
+
+# Calculate the mean of gdp_10_thou (if not already calculated)
+mean_gdp <- mean(world.data$gdp_10_thou, na.rm = TRUE)
+```
+
+```{r}
+# Use the standard error calculated from task 10
+# Standard error calculated in Task 10
+standard_error <- std_dev_gdp / sqrt(n)
+```
+
+```{r}
+# Set the z-score for a 95% confidence interval
+z_score <- 1.96
+```
+
+```{r}
+# Calculate the lower and upper bounds of the confidence interval
+lower_bound <- mean_gdp - z_score * standard_error
+upper_bound <- mean_gdp + z_score * standard_error
+```
+
+```{r}
+# Display the confidence interval
+lower_bound
+upper_bound
+```
+
+```{r}
+lower_bound <- mean_gdp - z_score * standard_error
+```
+
+```{r}
+lower_bound
+```
+
+```{r}
+# Task 12: Draw histograms for democracies and non-democracies
+
+# Create the histogram for GDP, separating by democracy and non-democracy
+ggplot(world.data, aes(x = gdp_10_thou)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  facet_wrap(~ democ_regime) +
+  xlab("Per capita GDP (in 10,000 US dollars)") +
+  ylab("Number of countries") +
+  ggtitle("Histograms of Per Capita GDP for Democracies and Non-Democracies")
+```
+
+```{r}
+# Task 13: Remove missing values and replace "Yes" and "No" with "Democracy" and "Autocracy"
+
+# Create a new data frame excluding rows with NA in democ_regime
+dem_gdp <- world.data %>%
+  filter(!is.na(democ_regime))
+```
+
+```{r}
+# Create a new variable with more intuitive labels
+dem_gdp <- dem_gdp %>%
+  mutate(dem_dum = ifelse(democ_regime == "Yes", "Democracy", "Autocracy"))
+```
+
+```{r}
+# Draw the histogram for GDP, separating by democracy and autocracy
+ggplot(dem_gdp, aes(x = gdp_10_thou)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  facet_wrap(~ dem_dum) +
+  xlab("Per capita GDP (in 10,000 US dollars)") +
+  ylab("Number of countries") +
+  ggtitle("Histograms of Per Capita GDP for Democracies and Autocracies")
+```
+
+```{r}
+# Task 14: Calculate mean and 95% confidence interval for democracies
+
+# Filter the data for democracies
+democracy_gdp <- dem_gdp %>%
+  filter(dem_dum == "Democracy")
+```
+
+```{r}
+# Calculate the mean for democracies
+mean_democracy_gdp <- mean(democracy_gdp$gdp_10_thou, na.rm = TRUE)
+```
+
+```{r}
+# Calculate the standard deviation for democracies
+std_dev_democracy <- sd(democracy_gdp$gdp_10_thou, na.rm = TRUE)
+
+```
+
+```{r}
+# Number of democratic countries
+n_democracy <- nrow(democracy_gdp)
+```
+
+```{r}
+# Calculate the standard error for democracies
+standard_error_democracy <- std_dev_democracy / sqrt(n_democracy)
+```
+
+```{r}
+# Set the z-score for a 95% confidence interval
+z_score <- 1.96
+```
+
+```{r}
+# Calculate the lower and upper bounds of the 95% confidence interval
+lower_bound_democracy <- mean_democracy_gdp - z_score * standard_error_democracy
+```
+
+```{r}
+upper_bound_democracy <- mean_democracy_gdp + z_score * standard_error_democracy
+```
+
+```{r}
+# Display the mean and 95% confidence interval
+mean_democracy_gdp
+c(lower_bound_democracy, upper_bound_democracy)
+```
+
+```{r}
+# Task 15: Calculate mean and 95% confidence interval for autocracies
+
+# Filter the data for autocracies
+autocracy_gdp <- dem_gdp %>%
+  filter(dem_dum == "Autocracy")
+```
+
+```{r}
+# Calculate the mean for autocracies
+mean_autocracy_gdp <- mean(autocracy_gdp$gdp_10_thou, na.rm = TRUE)
+
+```
+
+```{r}
+# Calculate the standard deviation for autocracies
+std_dev_autocracy <- sd(autocracy_gdp$gdp_10_thou, na.rm = TRUE)
+```
+
+```{r}
+# Number of autocratic countries
+n_autocracy <- nrow(autocracy_gdp)
+```
+
+```{r}
+# Calculate the standard error for autocracies
+standard_error_autocracy <- std_dev_autocracy / sqrt(n_autocracy)
+
+```
+
+```{r}
+# Set the z-score for a 95% confidence interval
+z_score <- 1.96
+```
+
+```{r}
+# Calculate the lower and upper bounds of the 95% confidence interval
+lower_bound_autocracy <- mean_autocracy_gdp - z_score * standard_error_autocracy
+
+
+```
+
+```{r}
+upper_bound_autocracy <- mean_autocracy_gdp + z_score * standard_error_autocracy
+
+```
+
+```{r}
+mean_autocracy_gdp
+c(lower_bound_autocracy, upper_bound_autocracy)
+```
+
+```{r}
+# Task 16: Calculate probability of rain given dark clouds using Bayes' Theorem
+
+# Given probabilities
+P_R <- 0.30          # Probability of rain, P(R)
+```
+
+```{r}
+P_not_R <- 1 - P_R   # Probability of no rain, P(¬R)
+```
+
+```{r}
+P_C_given_R <- 0.95  # Probability of clouds given rain, P(C|R)
+```
+
+```{r}
+P_C_given_not_R <- 0.25  # Probability of clouds given no rain, P(C|¬R)
+```
+
+```{r}
+# Calculate P(C) using the total probability formula
+P_C <- (P_C_given_R * P_R) + (P_C_given_not_R * P_not_R)
+
+```
+
+```{r}
+# Apply Bayes' Theorem to calculate P(R|C)
+P_R_given_C <- (P_C_given_R * P_R) / P_C
+```
+
+```{r}
+# Display the probability of rain given dark clouds
+P_R_given_C
+```
+
+```{r}
+# Task 17: Bayesian inference with a Beta distribution
+
+# Given parameters for the prior Beta(1.5, 1.5)
+a <- 1.5
+b <- 1.5
+```
+
+```{r}
+# Number of students who answered "Yes" and "No"
+n_yes <- 37
+n_no <- 13
+```
+
+```{r}
+# (a) Calculate the prior mean and prior standard deviation
+prior_mean <- a / (a + b)
+prior_var <- (a * b) / ((a + b)^2 * (a + b + 1))
+prior_sd <- sqrt(prior_var)
+```
+
+```{r}
+# Display prior mean and prior standard deviation
+prior_mean
+
+```
+
+```{r}
+prior_sd
+```
+
+```{r}
+# (b) Find the prior probability that theta < 0.6
+prior_prob <- pbeta(0.6, a, b)
+```
+
+```{r}
+# Display the prior probability P(theta < 0.6)
+prior_prob
+
+```
+
+```{r}
+# (c) Likelihood function for the Beta distribution
+# Likelihood is implicit in updating the posterior as Beta(a + n_yes, b + n_no)
+
+# (d) Posterior distribution after observing the data
+# Posterior will be Beta(a + n_yes, b + n_no)
+posterior_a <- a + n_yes
+```
+
+```{r}
+posterior_b <- b + n_no
+```
+
+```{r}
+# Plotting the prior and posterior distributions
+theta <- seq(0.01, 0.99, 0.01)
+prior_density <- dbeta(theta, a, b)
+posterior_density <- dbeta(theta, posterior_a, posterior_b)
+```
+
+```{r}
+# Plot the prior and posterior distributions
+plot(theta, posterior_density, type = "l", col = "blue", 
+     xlab = expression(theta), ylab = "Density", 
+     main = "Prior and Posterior Distributions")
+lines(theta, prior_density, col = "red", lty = 2)
+
+legend("topright", legend = c("Posterior", "Prior"), col = c("blue", "red"), lty = c(1, 2))
+```
+
+```{}
+```
